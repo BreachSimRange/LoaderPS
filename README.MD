@@ -2,7 +2,7 @@
 
 A web-based tool for generating PowerShell shellcode loaders with various injection techniques, encryption, and evasion options.
 
->  **TRAINING TOOL ONLY** — This loader was created exclusively for offensive security training. Use only in authorized lab environments.
+>  **TRAINING TOOL ONLY** - This loader was created exclusively for offensive security training. Use only in authorized lab environments.
 
 ## Features
 
@@ -91,6 +91,6 @@ Then open `http://localhost:8080` in your browser.
 
 ---
 
-**BreachSimRange** — Adversary Emulation & Red Team Training
+**BreachSimRange** - Adversary Emulation & Red Team Training
 
 © 2025 BreachSimRange | Training Build v1.0
