@@ -19,7 +19,7 @@ A web-based tool for generating PowerShell shellcode loaders with various inject
 
 ## Installation
 ```bash
-git clone https://github.com/yourrepo/LoaderPS.git
+git clone https://github.com/BreachSimRange/LoaderPS.git
 cd LoaderPS
 mkdir output
 ```
@@ -77,20 +77,9 @@ Then open `http://localhost:8080` in your browser.
 5. Click **Build PowerShell Loader**
 6. Generated scripts are saved to the `output/` directory
 
-## Project Structure
-```
-├── main.go
-├── utils/
-│   └── generator.go
-├── models/
-│   └── options.go
-├── templates/
-│   └── index.html
-└── output/
-```
 
 ---
 
-**BreachSimRange** - Adversary Emulation & Red Team Training
+**BreachSimRange**
 
-© 2025 BreachSimRange | Training Build v1.0
+© 2026 BreachSimRange | Training Build v1.0
