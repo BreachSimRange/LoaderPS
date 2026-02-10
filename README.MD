@@ -82,4 +82,4 @@ Then open `http://localhost:8080` in your browser.
 
 **BreachSimRange**
 
-© 2026 BreachSimRange | Training Build v1.0
+© 2026 BreachSimRange - Training Build v1.0
