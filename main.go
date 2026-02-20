@@ -7,6 +7,7 @@ import (
 	"embed"
 	"html/template"
 )
+//go:embed templates/*
 var content embed.FS
 
 var tpl *template.Template
