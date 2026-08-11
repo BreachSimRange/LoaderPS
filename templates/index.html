@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PowerShell Shellcode Loader Builder</title>
+  <style>
+    body {
+      font-family: Consolas, 'Courier New', monospace;
+      background-color: #012456;
+      color: #cfd8dc;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+    }
+    textarea, input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 0.3rem;
+      border: 1px solid #78909c;
+      border-radius: 4px;
+      background-color: #eceff1;
+      color: #000;
+      box-sizing: border-box;
+    }
+    label {
+      display: block;
+      margin-top: 1.5rem;
+      font-weight: bold;
+      color: #ffffff;
+    }
+    .checkboxes label {
+      display: block;
+      margin: 0.5rem 0;
+      font-weight: normal;
+    }
+    .checkboxes input {
+      width: auto;
+      margin-right: 0.5rem;
+    }
+    .section {
+      background-color: #1a237e;
+      padding: 1rem;
+      margin-top: 1.5rem;
+      border-left: 4px solid #1976d2;
+      border-radius: 4px;
+    }
+    .section-title {
+      color: #bbdefb;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    .btn {
+      margin-top: 2rem;
+      background-color: #1565c0;
+      color: white;
+      padding: 0.8rem 1.4rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .btn:hover {
+      background-color: #1976d2;
+    }
+    #console {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #000;
+      color: #00ff00;
+      font-family: monospace;
+      font-size: 0.9rem;
+      height: 150px;
+      overflow-y: scroll;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 style="font-size: 2rem; color: #bbdefb;">PowerShell Shellcode Loader Builder</h1>
+    <form method="POST" action="/build" enctype="multipart/form-data" onsubmit="return validateForm()">
+      
+
+      <div class="section">
+        <div class="section-title">Shellcode</div>
+        <label for="shellcode">Shellcode (Base64 or Upload .bin)</label>
+        <textarea name="rawShellcode" id="shellcode" rows="6" required></textarea>
+        <input type="file" id="binFile" name="binFile" accept=".bin">
+        <span id="fileNameDisplay"></span>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Encryption</div>
+        <label for="encryptionMethod">Encryption Method</label>
+        <select name="encryptionMethod" id="encryptionMethod">
+          <option value="">None</option>
+          <option value="AES">AES-256-CBC</option>
+          <option value="XOR">XOR</option>
+        </select>
+
+        <label for="aeskey">AES Key</label>
+        <input type="text" name="aeskey" id="aeskey" placeholder="Enter AES key">
+
+        <label for="xorkey">XOR Key</label>
+        <input type="text" name="xorkey" id="xorkey" placeholder="Enter XOR key">
+      </div>
+
+      <div class="section">
+        <div class="section-title">Obfuscation</div>
+        <label><input type="checkbox" name="obfuscate"> Enable Obfuscation</label>
+        
+        <label for="obfuscationLevel">Obfuscation Level</label>
+        <select name="obfuscationLevel" id="obfuscationLevel">
+          <option value="basic">Basic (Base64)</option>
+          <option value="advanced">Advanced (Variable Randomization)</option>
+          <option value="extreme">Extreme (Full Obfuscation)</option>
+        </select>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Bypass Options</div>
+        
+        <label>AMSI Bypass</label>
+        <label><input type="checkbox" name="amsi"> Enable AMSI Bypass</label>
+        <label for="amsiBypassType">AMSI Bypass Technique</label>
+        <select name="amsiBypassType" id="amsiBypassType">
+          <option value="amsiInitFailed">amsiInitFailed Patch</option>
+          <option value="AmsiContext">AmsiContext Patch</option>
+          <option value="ScanResult">ScanResult Override</option>
+          <option value="PSLogPolicy">PSLogPolicy Disable</option>
+        </select>
+
+        <label>ETW Evasion</label>
+        <label><input type="checkbox" name="etw"> Enable ETW Bypass</label>
+        <label for="etwBypassType">ETW Bypass Technique</label>
+        <select name="etwBypassType" id="etwBypassType">
+          <option value="etwPatch">ETW Patching</option>
+          <option value="DisableETW">Disable Event Tracing</option>
+          <option value="CLRProfiling">CLR Profiling Disable</option>
+          <option value="DisableTracing">Disable All Tracing</option>
+        </select>
+
+        <label for="edr">EDR Bypass Type</label>
+        <select name="edr" id="edr">
+          <option value="">None</option>
+          <option value="KillAV">KillAV</option>
+          <option value="PEBPatch">PEBPatch</option>
+        </select>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Execution Evasion</div>
+        
+        <label for="executionDelay">Execution Delay</label>
+        <select name="executionDelay" id="executionDelay">
+          <option value="0">Immediate</option>
+          <option value="60">1 Minute Delay</option>
+          <option value="300">5 Minute Delay</option>
+          <option value="900">15 Minute Delay</option>
+          <option value="3600">1 Hour Delay</option>
+          <option value="random">Random Jitter (1-10 minutes)</option>
+        </select>
+
+        <label><input type="checkbox" name="hideWindow"> Hide Window</label>
+        <label><input type="checkbox" name="sleep"> Enable Sleep Masking</label>
+        <label><input type="checkbox" name="noise"> Add Telemetry Noise</label>
+        <label><input type="checkbox" name="sandboxDetection"> Sandbox/VM Detection</label>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Injection Method & Target</div>
+        
+        <label for="injectmethod">Injection Technique</label>
+        <select name="injectmethod" id="injectmethod" required>
+          <option value="">-- Select Injection --</option>
+          <option value="CreateRemoteThread">CreateRemoteThread</option>
+          <option value="QueueUserAPC">QueueUserAPC</option>
+          <option value="NtCreateThreadEx">NtCreateThreadEx</option>
+        </select>
+
+        <label for="targetproc">Target Process</label>
+        <select name="targetproc" id="targetproc" required>
+          <option value="">-- Select Target --</option>
+          <option value="notepad.exe">notepad.exe</option>
+          <option value="explorer.exe">explorer.exe</option>
+          <option value="cmd.exe">cmd.exe</option>
+          <option value="svchost.exe">svchost.exe</option>
+          <option value="powershell.exe">powershell.exe</option>
+        </select>
+      </div>
+
+
+      <div class="section">
+        <div class="section-title">Cleanup & Anti-Forensics</div>
+        
+        <label for="cleanupMethod">Cleanup Method</label>
+        <select name="cleanupMethod" id="cleanupMethod">
+          <option value="">None</option>
+          <option value="selfDelete">Self-Delete File</option>
+          <option value="clearEventLog">Clear Event Logs</option>
+          <option value="deleteHistory">Delete Command History</option>
+          <option value="wipeTemp">Wipe Temp Files</option>
+          <option value="allCleanup">Full Cleanup (All Above)</option>
+        </select>
+      </div>
+
+      <div id="console">[+] Ready to build loader...</div>
+      <button type="submit" class="btn">Build PowerShell Loader</button>
+    </form>
+  </div>
+<br /> <br /><br /> <br />
+
+<div style="background: linear-gradient(90deg, #b71c1c 0%, #d32f2f 100%); color: #fff; padding: 0.75rem 1rem; text-align: center; font-size: 0.85rem;">
+  <strong>TRAINING TOOL ONLY</strong> - This loader was created exclusively for offensive security training. Use only in authorized lab environments.
+</div>
+
+  <script>
+    function validateForm() {
+      const shellcode = document.getElementById("shellcode").value.trim();
+      const proc = document.getElementById("targetproc").value;
+      const inject = document.getElementById("injectmethod").value;
+      
+      if (!shellcode || !proc || !inject) {
+        alert("Please enter shellcode, select injection method, and target process.");
+        return false;
+      }
+
+      const encryption = document.getElementById("encryptionMethod").value;
+      if (encryption && !document.getElementById("aeskey").value && !document.getElementById("xorkey").value) {
+        alert("Please enter an encryption key.");
+        return false;
+      }
+
+      document.getElementById("console").innerText += "\n[+] Building loader...";
+      return true;
+    }
+
+    document.getElementById("binFile").addEventListener("change", function (event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      const fileNameDisplay = document.getElementById("fileNameDisplay");
+      const consoleBox = document.getElementById("console");
+
+      if (!file) return;
+
+      fileNameDisplay.textContent = "Loading " + file.name + "...";
+      consoleBox.innerText += `\n[+] Reading shellcode file: ${file.name}`;
+
+      reader.onload = function () {
+        const base64 = btoa(
+          new Uint8Array(reader.result).reduce((data, byte) => data + String.fromCharCode(byte), '')
+        );
+        document.getElementById("shellcode").value = base64;
+        fileNameDisplay.textContent = "Loaded: " + file.name;
+        consoleBox.innerText += `\n[+] Successfully loaded file: ${file.name}`;
+      };
+
+      reader.onerror = function () {
+        fileNameDisplay.textContent = "Error reading file.";
+        consoleBox.innerText += "\n[!] Error loading shellcode file.";
+      };
+
+      reader.readAsArrayBuffer(file);
+    });
+  </script>
+</body>
+</html>
